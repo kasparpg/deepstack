@@ -3,3 +3,8 @@ pandas
 tensorflow
 keras
 art
+flask
+flask-socketio
+python-socketio
+eventlet
+gunicorn

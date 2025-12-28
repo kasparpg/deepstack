@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepStack2 - Texas Hold'em Poker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🃏 DeepStack2 - Texas Hold'em Poker</h1>
+        </header>
+
+        <!-- Game Setup Screen -->
+        <div id="setup-screen" class="screen active">
+            <div class="setup-box">
+                <h2>Create or Join Game</h2>
+                
+                <div class="tab-buttons">
+                    <button class="tab-btn active" onclick="showTab('create')">Create Game</button>
+                    <button class="tab-btn" onclick="showTab('join')">Join Game</button>
+                </div>
+
+                <!-- Create Game Tab -->
+                <div id="create-tab" class="tab-content active">
+                    <div class="form-group">
+                        <label for="player-name-create">Your Name:</label>
+                        <input type="text" id="player-name-create" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="player-count">Number of Players (2-6):</label>
+                        <input type="number" id="player-count" min="2" max="6" value="2" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="human-count">Human Players (1-6):</label>
+                        <input type="number" id="human-count" min="1" max="6" value="1" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="chips-per-player">Starting Chips:</label>
+                        <input type="number" id="chips-per-player" min="100" value="1000" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bet-limit">Bet Limit:</label>
+                        <input type="number" id="bet-limit" min="10" value="50" required>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="createGame()">Create Game</button>
+                </div>
+
+                <!-- Join Game Tab -->
+                <div id="join-tab" class="tab-content">
+                    <div class="form-group">
+                        <label for="player-name-join">Your Name:</label>
+                        <input type="text" id="player-name-join" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="game-code">Game Code:</label>
+                        <input type="text" id="game-code" placeholder="Enter game code" required>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="joinGame()">Join Game</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Waiting Room Screen -->
+        <div id="waiting-screen" class="screen">
+            <div class="waiting-box">
+                <h2>Waiting for Players...</h2>
+                <div id="game-code-display" class="game-code"></div>
+                <p id="waiting-message">Share the game code with other players</p>
+                <div class="spinner"></div>
+                <button class="btn btn-primary" onclick="startGame()">Start Game</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen">
+            <div class="game-container">
+                <!-- Game Info -->
+                <div class="game-info">
+                    <div class="info-item">
+                        <span class="label">Round:</span>
+                        <span id="round-number">1</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Pot:</span>
+                        <span id="pot-size">0</span> chips
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Highest Bid:</span>
+                        <span id="highest-bid">0</span> chips
+                    </div>
+                </div>
+
+                <!-- Community Cards -->
+                <div class="table">
+                    <h3>Community Cards</h3>
+                    <div id="community-cards" class="card-container">
+                        <div class="card card-back">?</div>
+                        <div class="card card-back">?</div>
+                        <div class="card card-back">?</div>
+                        <div class="card card-back">?</div>
+                        <div class="card card-back">?</div>
+                    </div>
+                </div>
+
+                <!-- Players -->
+                <div id="players-container" class="players-container">
+                    <!-- Players will be dynamically added here -->
+                </div>
+
+                <!-- Your Hand -->
+                <div class="your-hand">
+                    <h3>Your Hand</h3>
+                    <div id="your-cards" class="card-container">
+                        <div class="card card-back">?</div>
+                        <div class="card card-back">?</div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div id="action-panel" class="action-panel">
+                    <h3>Your Turn</h3>
+                    <div id="action-buttons" class="action-buttons">
+                        <!-- Buttons will be dynamically added -->
+                    </div>
+                    <div class="raise-input" id="raise-input" style="display: none;">
+                        <input type="number" id="raise-amount" min="0" placeholder="Raise amount">
+                    </div>
+                </div>
+
+                <!-- Game Log -->
+                <div class="game-log">
+                    <h3>Game Log</h3>
+                    <div id="log-messages" class="log-messages">
+                        <p>Welcome to DeepStack2!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>
