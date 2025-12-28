@@ -15,10 +15,10 @@ def create_game(player_count: int, human_count: int, full_deck: bool, cards_per_
     tprint("TEXAS HOLD'EM")
     print("Welcome to Texas Hold'em with AI!")
     time.sleep(1)
-    print("Attempting to create a game with", player_count, "players, where", int(player_count-human_count),
-          "are bot(s), and", human_count, "are human(s).")
-    time.sleep(1)
-
+    
+    # Ask for player count
+    player_count = input_number("\nHow many players? (2-6): ")
+    
     # Make sure that we have 2-6 players.
     if player_count > 6:
         print("ERROR: The maximum number of players is 6.")
@@ -26,20 +26,30 @@ def create_game(player_count: int, human_count: int, full_deck: bool, cards_per_
     if player_count < 2:
         print("ERROR: The minimum number of players is 2.")
         return
-
+    
+    # Ask for human count
+    human_count = input_number("\nHow many human players? (0-" + str(player_count) + "): ")
+    
     # Make sure that we do not have more human players than the specified number of players, and no less than 1.
     if human_count > player_count:
         print("ERROR: The maximum number of human players is:", player_count)
         return
-
-    if starting_chips < 0:
-        print("ERROR: Starting chips have to be greater than 0.")
+    if human_count < 0:
+        print("ERROR: The minimum number of human players is 0.")
         return
+    
+    print("\nAttempting to create a game with", player_count, "players, where", int(player_count-human_count),
+          "are bot(s), and", human_count, "are human(s).")
+    time.sleep(1)
 
     # Ask for how many chips per player.
     chips_per_player = input_number("\nHow many chips would you like per player? Enter here: ")
     print("-> Each player will start with", chips_per_player, "chips.")
     time.sleep(1)
+    
+    if chips_per_player < 0:
+        print("ERROR: Starting chips have to be greater than 0.")
+        return
 
     bet_limit = input_number("\nWhat should the bet limit be? Enter here: ")
     print("-> The bet limit is set to", bet_limit, "chips.")
@@ -198,20 +208,23 @@ def create_game(player_count: int, human_count: int, full_deck: bool, cards_per_
             if not current_player.folded:
                 # The current player taking an action is a human.
                 if current_player.human:
-                    action = input_number("\nIt is " + str(current_player.name) + "'s turn. You have " +
-                                          str(current_player.chips) + " chips, and " +
-                                          str(current_player.chips_added_to_table) +
-                                          " chips on the table. What will you do? " +
-                                          "\n1 - Add chips to table" +
-                                          "\n2 - Fold" +
-                                          "\n3 - Show your cards" +
-                                          "\n4 - Show cards on table" +
-                                          "\n5 - Show player chips" +
-                                          "\nEnter number here: ")
-                    action, highest_bid, chips_to_give = check_legal_action(action, game_state, 0)
-                    table_chips += chips_to_give
-                    if action >= 0:
-                        action_index = get_proper_array_index(action, players, 1)
+                    while True:
+                        action = input_number("\nIt is " + str(current_player.name) + "'s turn. You have " +
+                                              str(current_player.chips) + " chips, and " +
+                                              str(current_player.chips_added_to_table) +
+                                              " chips on the table. What will you do? " +
+                                              "\n1 - Add chips to table" +
+                                              "\n2 - Fold" +
+                                              "\n3 - Show your cards" +
+                                              "\n4 - Show cards on table" +
+                                              "\n5 - Show player chips" +
+                                              "\nEnter number here: ")
+                        action, highest_bid, chips_to_give = check_legal_action(action, game_state, 0)
+                        table_chips += chips_to_give
+                        if action >= 0:
+                            action_index = get_proper_array_index(action, players, 1)
+                            break
+                        # If action is -1 (informational action), loop back and ask again
 
                 # The current player taking an action is a bot.
                 else:
@@ -338,9 +351,8 @@ def create_game(player_count: int, human_count: int, full_deck: bool, cards_per_
     return 0
 
 
-player_count = 2
-human_count = 0
+# Game configuration
 full_deck = False
 cards_per_hand = 2
-starting_chips = 100
-game = create_game(player_count, human_count, full_deck, cards_per_hand)
+# player_count and human_count are now requested within create_game()
+game = create_game(0, 0, full_deck, cards_per_hand)

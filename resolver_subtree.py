@@ -207,6 +207,7 @@ def cut_off_tree(initial_lap, node, child, depth, action):
             elif action == 'CALL':
                 continue_loop = True
         return continue_loop
+    return True
 
 
 def deploy_nn(node, M):
